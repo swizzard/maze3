@@ -1,0 +1,8 @@
+[package]
+name = "maze3"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+multid = "2.1.0"
+rand = "0.9.1"
