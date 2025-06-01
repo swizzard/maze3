@@ -6,6 +6,7 @@ use rand::prelude::*;
 use std::fmt::Write;
 
 pub mod movement;
+pub mod ui;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum DoorState {

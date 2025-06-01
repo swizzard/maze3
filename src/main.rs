@@ -1,3 +1,4 @@
+use color_eyre::Result;
 use maze3::*;
 use rand::distr::StandardUniform;
 use rand::prelude::*;
