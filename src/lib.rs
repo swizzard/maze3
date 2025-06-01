@@ -5,6 +5,8 @@ use multid::{BoundedIx2, V2, iterators};
 use rand::prelude::*;
 use std::fmt::Write;
 
+pub mod movement;
+
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum DoorState {
     Open,
@@ -156,8 +158,7 @@ impl<const N_ROWS: usize, const N_COLS: usize> Maze<N_ROWS, N_COLS> {
             goal: BoundedIx2::max(),
         }
     }
-    pub fn seed_doors_naive(&mut self) {
-        let mut rng = rand::rng();
+    pub fn seed_doors_naive(&mut self, rng: &mut ThreadRng) {
         for ix in iterators::V2Indices::<N_ROWS, N_COLS>::new() {
             if rng.random_bool(0.5) {
                 self.open_north(ix);
