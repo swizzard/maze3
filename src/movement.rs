@@ -1,4 +1,5 @@
-use crate::Maze;
+use crate::maze::Maze;
+use crossterm::event::{Event, KeyCode, KeyEvent};
 use rand::{distr::StandardUniform, prelude::*};
 
 pub fn random_step<const N_ROWS: usize, const N_COLS: usize>(
@@ -14,6 +15,80 @@ pub fn random_step<const N_ROWS: usize, const N_COLS: usize>(
             2 => maze.move_east(),
             3 => maze.move_west(),
             _ => panic!("unreachable"),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum MazeEvent {
+    MoveN,
+    MoveS,
+    MoveE,
+    MoveW,
+    Quit,
+    OtherKey(KeyCode),
+    Other(Event),
+}
+
+impl From<Event> for MazeEvent {
+    fn from(val: Event) -> Self {
+        match val {
+            Event::Key(KeyEvent {
+                code: KeyCode::Esc, ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('q'),
+                ..
+            }) => MazeEvent::Quit,
+            Event::Key(KeyEvent {
+                code: KeyCode::Left,
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('h'),
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('a'),
+                ..
+            }) => MazeEvent::MoveW,
+            Event::Key(KeyEvent {
+                code: KeyCode::Right,
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('l'),
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('d'),
+                ..
+            }) => MazeEvent::MoveE,
+            Event::Key(KeyEvent {
+                code: KeyCode::Up, ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('k'),
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('w'),
+                ..
+            }) => MazeEvent::MoveN,
+            Event::Key(KeyEvent {
+                code: KeyCode::Down,
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('j'),
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char('s'),
+                ..
+            }) => MazeEvent::MoveS,
+            Event::Key(KeyEvent { code: kc, .. }) => MazeEvent::OtherKey(kc),
+            other => MazeEvent::Other(other),
         }
     }
 }
