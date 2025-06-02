@@ -449,9 +449,9 @@ dependencies = [
 
 [[package]]
 name = "multid"
-version = "2.1.2"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "644451666ffaee775f3067c1bf23128f86e687c1c5a2c10c01e048a3c8797fa4"
+checksum = "5737a481d905e7ff252a115dcb0e4f1f468640cc28be4b8d43eb7bcbee6f0d16"
 dependencies = [
  "thiserror",
 ]

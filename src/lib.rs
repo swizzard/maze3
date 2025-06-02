@@ -156,7 +156,7 @@ impl<const N_ROWS: usize, const N_COLS: usize> Maze<N_ROWS, N_COLS> {
         Self {
             rooms: V2::new(rooms).unwrap(),
             current_ix: BoundedIx2::new(0, 0).unwrap(),
-            goal: BoundedIx2::max(),
+            goal: BoundedIx2::<N_ROWS, N_COLS>::max(),
         }
     }
     pub fn seed_doors_naive(&mut self, rng: &mut ThreadRng) {
@@ -339,6 +339,9 @@ impl<const N_ROWS: usize, const N_COLS: usize> Maze<N_ROWS, N_COLS> {
         let mut s = String::with_capacity(cap);
         self.fprint(&mut s).unwrap();
         s
+    }
+    pub fn is_done(&self) -> bool {
+        self.current_ix == self.goal
     }
 }
 
