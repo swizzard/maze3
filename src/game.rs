@@ -1,6 +1,6 @@
 use crate::{
     Direction,
-    maze::{DoorState, Maze},
+    maze::Maze,
     movement::MazeEvent,
     ui::{self, RoomView, UnseenRoomView, render_maze},
 };
@@ -164,39 +164,19 @@ pub fn seed_doors_naive<const N_ROWS: usize, const N_COLS: usize>(
     rng: &mut ThreadRng,
 ) {
     for ix in V2Indices::<N_ROWS, N_COLS>::new() {
-        if rng.random_bool(0.5) {
-            maze.open_north(ix);
-        }
-        if rng.random_bool(0.5) {
-            maze.open_south(ix);
-        }
-        if rng.random_bool(0.5) {
-            maze.open_east(ix);
-        }
-        if rng.random_bool(0.5) {
-            maze.open_west(ix);
-        }
-    }
-    // ensure we can get out of starting room
-    let start_ix = BoundedIx2::min();
-    if maze.rooms[start_ix].doors.east == Some(DoorState::Closed)
-        && maze.rooms[start_ix].doors.south == Some(DoorState::Closed)
-    {
-        if rng.random_bool(0.5) {
-            maze.open_west(start_ix);
-        } else {
-            maze.open_south(start_ix);
-        }
-    }
-    // ensure we can get into end room
-    let end_ix = BoundedIx2::max();
-    if maze.rooms[end_ix].doors.west == Some(DoorState::Closed)
-        && maze.rooms[end_ix].doors.north == Some(DoorState::Closed)
-    {
-        if rng.random_bool(0.5) {
-            maze.open_east(end_ix);
-        } else {
-            maze.open_north(end_ix);
+        while !maze.rooms[ix].doors.any_open() {
+            if rng.random_bool(0.5) {
+                maze.open_north(ix);
+            }
+            if rng.random_bool(0.5) {
+                maze.open_south(ix);
+            }
+            if rng.random_bool(0.5) {
+                maze.open_east(ix);
+            }
+            if rng.random_bool(0.5) {
+                maze.open_west(ix);
+            }
         }
     }
 }

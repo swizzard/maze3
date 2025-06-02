@@ -1,3 +1,4 @@
+use crate::{Direction, DirectionsIter};
 use multid::{BoundedIx2, V2, iterators};
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum DoorState {
@@ -54,6 +55,14 @@ impl Doors {
             self.west = Some(DoorState::Closed)
         }
     }
+    pub fn any_open(&self) -> bool {
+        for (_, st) in self {
+            if st == DoorState::Open {
+                return true;
+            }
+        }
+        false
+    }
 }
 
 impl Default for Doors {
@@ -67,10 +76,57 @@ impl Default for Doors {
     }
 }
 
+impl<'a> IntoIterator for &'a Doors {
+    type Item = (Direction, DoorState);
+    type IntoIter = DoorsIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        DoorsIter::new(self)
+    }
+}
+
+pub struct DoorsIter<'a> {
+    dirs: DirectionsIter,
+    doors: &'a Doors,
+}
+
+impl<'a> DoorsIter<'a> {
+    fn new(doors: &'a Doors) -> Self {
+        Self {
+            dirs: DirectionsIter::new(),
+            doors,
+        }
+    }
+}
+
+impl<'a> Iterator for DoorsIter<'a> {
+    type Item = (Direction, DoorState);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        for dir in self.dirs.by_ref() {
+            if let Some(ds) = match dir {
+                Direction::North => self.doors.north,
+                Direction::South => self.doors.south,
+                Direction::East => self.doors.east,
+                Direction::West => self.doors.west,
+            } {
+                return Some((dir, ds));
+            }
+        }
+        None
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct Room {
     pub description: String,
     pub doors: Doors,
+}
+
+impl Room {
+    pub fn all_doors(&self) -> DoorsIter<'_> {
+        DoorsIter::new(&self.doors)
+    }
 }
 
 #[derive(Debug, Clone)]
