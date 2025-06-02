@@ -1,4 +1,7 @@
-use crate::maze::{DoorState, Room};
+use crate::{
+    Direction,
+    maze::{DoorState, Room},
+};
 use ratatui::{
     Frame,
     style::Color,
@@ -15,6 +18,19 @@ pub const ROOM_SIZE: f64 = SEG_LEN * SEG_COUNT;
 pub const BG_COLOR: Color = Color::Black;
 pub const WALL_COLOR: Color = Color::Green;
 pub const DOOR_COLOR: Color = Color::Red;
+pub fn render_maze<const N_ROWS: usize, const N_COLS: usize, F>(
+    f: F,
+) -> impl for<'a> FnOnce(&'a mut Frame)
+where
+    F: Fn(&mut Context),
+{
+    let widget = Canvas::default()
+        .x_bounds([-200.0, 200.0])
+        .y_bounds([-200.0, 200.0])
+        .background_color(BG_COLOR)
+        .paint(f);
+    |frame: &mut Frame| frame.render_widget(widget, frame.area())
+}
 
 #[derive(Debug)]
 pub struct RoomView<'a> {
@@ -121,24 +137,58 @@ impl<'a> Shape for RoomView<'a> {
     }
 }
 
+#[derive(Debug)]
+pub struct UnseenRoomView {
+    pub x: f64,
+    pub y: f64,
+    pub hidden_walls: Vec<Direction>,
+}
+
+impl Shape for UnseenRoomView {
+    fn draw(&self, painter: &mut Painter<'_, '_>) {
+        let color = Color::Gray;
+        for wall in self.hidden_walls.iter() {
+            match wall {
+                Direction::North => Line {
+                    x1: self.x,
+                    y1: self.y,
+                    x2: self.x + ROOM_SIZE,
+                    y2: self.y,
+                    color,
+                }
+                .draw(painter),
+                Direction::West => Line {
+                    x1: self.x,
+                    y1: self.y,
+                    x2: self.x,
+                    y2: self.y - ROOM_SIZE,
+                    color,
+                }
+                .draw(painter),
+                Direction::South => Line {
+                    x1: self.x,
+                    y1: self.y - ROOM_SIZE,
+                    x2: self.x + ROOM_SIZE,
+                    y2: self.y - ROOM_SIZE,
+                    color,
+                }
+                .draw(painter),
+                Direction::East => Line {
+                    x1: self.x + ROOM_SIZE,
+                    y1: self.y,
+                    x2: self.x + ROOM_SIZE,
+                    y2: self.y - ROOM_SIZE,
+                    color,
+                }
+                .draw(painter),
+            }
+        }
+    }
+}
 fn door_state_color(ds: &Option<DoorState>) -> Color {
     match ds {
         None => WALL_COLOR,
         Some(DoorState::Open) => BG_COLOR,
         Some(DoorState::Closed) => DOOR_COLOR,
     }
-}
-
-pub fn render_maze<'a, const N_ROWS: usize, const N_COLS: usize, F>(
-    f: F,
-) -> impl FnOnce(&'a mut Frame)
-where
-    F: Fn(&mut Context),
-{
-    let widget = Canvas::default()
-        .x_bounds([-200.0, 200.0])
-        .y_bounds([-200.0, 200.0])
-        .background_color(BG_COLOR)
-        .paint(f);
-    |frame: &mut Frame| frame.render_widget(widget, frame.area())
 }
