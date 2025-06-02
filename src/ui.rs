@@ -25,8 +25,8 @@ where
     F: Fn(&mut Context),
 {
     let widget = Canvas::default()
-        .x_bounds([-200.0, 200.0])
-        .y_bounds([-200.0, 200.0])
+        .x_bounds([MIN_X, MAX_X])
+        .y_bounds([MIN_Y, MAX_Y])
         .background_color(BG_COLOR)
         .paint(f);
     |frame: &mut Frame| frame.render_widget(widget, frame.area())

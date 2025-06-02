@@ -6,5 +6,5 @@ fn main() -> Result<()> {
     let mut m = Maze::<7, 7>::new();
     let mut rng = rand::rng();
     seed_doors_naive(&mut m, &mut rng);
-    render_ui(&mut m, &mut rng, Game::Hidden)
+    render_ui(&mut m, &mut rng, Game::Lantern)
 }
