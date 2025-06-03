@@ -127,6 +127,15 @@ impl Room {
     pub fn all_doors(&self) -> DoorsIter<'_> {
         DoorsIter::new(&self.doors)
     }
+    pub fn none_open(&self) -> bool {
+        !(matches!(self.doors.north, Some(DoorState::Open))
+            || matches!(self.doors.east, Some(DoorState::Open))
+            || matches!(self.doors.south, Some(DoorState::Open))
+            || matches!(self.doors.west, Some(DoorState::Open)))
+    }
+    pub fn available_directions(&self) -> impl Iterator<Item = Direction> {
+        self.all_doors().map(|(dir, _)| dir)
+    }
 }
 
 #[derive(Debug, Clone)]
