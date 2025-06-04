@@ -5,6 +5,7 @@ use rand::rngs::ThreadRng;
 pub mod basic;
 pub mod hidden;
 pub mod lantern;
+pub mod menu;
 pub mod seeders;
 
 pub use seeders::{seed_doors_naive, seed_doors_path};
