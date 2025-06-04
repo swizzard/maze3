@@ -1,5 +1,5 @@
 use color_eyre::Result;
-use maze3::*;
+use samazing::*;
 
 fn main() -> Result<()> {
     color_eyre::install()?;
