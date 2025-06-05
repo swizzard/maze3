@@ -16,4 +16,10 @@ in all of them:
 
 - you're this guy: 😀
 - you're trying to get to the goal: 🥅
+- controls
+  - `w`/`k`/↑ - move north
+  - `s`/`j`/↓ - move south
+  - `a`/`h`/← - move east
+  - `d`/`l`/→ - move west
+  - `q` - quit
 - red doors are impassible
