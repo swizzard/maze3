@@ -10,7 +10,7 @@ pub mod lantern;
 pub mod menu;
 pub mod seeders;
 
-use menu::MenuChoice;
+use menu::{MenuChoice, MenuState};
 pub use seeders::{seed_doors_naive, seed_doors_path};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -29,44 +29,39 @@ pub enum Outcome {
 pub fn game_loop<const N_ROWS: usize, const N_COLS: usize>() -> Result<()> {
     let mut terminal = ratatui::init();
     let mut rng = ThreadRng::default();
-    let mut choice: Option<MenuChoice> = None;
-    let mut menu_state = ListState::default();
-    menu_state.select_first();
+    let mut menu_state = MenuState::default();
     loop {
         terminal.draw(|frame: &mut Frame| {
             frame.render_stateful_widget(menu::GameMenu, frame.area(), &mut menu_state)
         })?;
-        match choice {
+        match menu_state.choice {
             None => (),
             Some(MenuChoice::Quit) => break,
             Some(MenuChoice::Game(Game::Basic)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                basic::game(&mut terminal, &mut maze)?;
-                choice = None;
+                let outcome = basic::game(&mut terminal, &mut maze)?;
+                menu_state.game_over(outcome);
                 continue;
             }
             Some(MenuChoice::Game(Game::Hidden)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                hidden::game(&mut terminal, &mut maze)?;
-                choice = None;
+                let outcome = hidden::game(&mut terminal, &mut maze)?;
+                menu_state.game_over(outcome);
                 continue;
             }
             Some(MenuChoice::Game(Game::Lantern)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                lantern::game(&mut terminal, &mut maze)?;
-                choice = None;
+                let outcome = lantern::game(&mut terminal, &mut maze)?;
+                menu_state.game_over(outcome);
                 continue;
             }
         };
-        choice = None;
+        menu_state.unchoose();
         match event::read()?.into() {
             MazeEvent::MoveN => &menu_state.select_previous(),
             MazeEvent::MoveS => &menu_state.select_next(),
-            MazeEvent::Quit => &menu_state.select_last(),
-            MazeEvent::Enter => {
-                choice = menu_state.selected().map(MenuChoice::from);
-                &()
-            }
+            MazeEvent::Quit => &menu_state.select_quit(),
+            MazeEvent::Enter => &menu_state.choose(),
             _ => &(),
         };
     }
