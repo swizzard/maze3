@@ -74,19 +74,21 @@ impl<'a, const N_ROWS: usize, const N_COLS: usize> StatefulWidget
                 {
                     let x = -70.0 + ui::ROOM_SIZE * signed_diff(ix.x(), curr_ix.x());
                     let y = 30.0 - ui::ROOM_SIZE * signed_diff(ix.y(), curr_ix.y());
+                    let label_x = x + (ui::SEG_LEN * 3.0);
+                    let label_y = y - (ui::SEG_LEN * 4.0);
+                    if ix == state.maze.goal {
+                        ctx.print(label_x, label_y, "\u{1f945}")
+                    };
                     if state.is_seen(&ix) {
                         let room = &state.maze.rooms[ix];
                         let view = RoomView { x, y, room };
                         ctx.draw(&view);
-                        let label_x = x + (ui::SEG_LEN * 3.0);
-                        let label_y = y - (ui::SEG_LEN * 4.0);
                         if ix == state.maze.current_ix && ix == state.maze.goal {
                             ctx.print(label_x, label_y, "\u{1f940}")
                         } else if ix == state.maze.current_ix {
                             ctx.print(label_x, label_y, "\u{1f600}")
-                        } else if ix == state.maze.goal {
-                            ctx.print(label_x, label_y, "\u{1f945}")
                         }
+                        ctx.layer();
                     } else {
                         let mut unseen: Vec<Direction> = Vec::with_capacity(4);
                         if ix.north().map(|i| !state.is_seen(&i)).unwrap_or(true) {
@@ -106,6 +108,7 @@ impl<'a, const N_ROWS: usize, const N_COLS: usize> StatefulWidget
                             y,
                             hidden_walls: unseen,
                         });
+                        ctx.layer();
                     }
                 }
             });

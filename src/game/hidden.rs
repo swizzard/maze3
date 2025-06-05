@@ -8,7 +8,6 @@ use crate::{
 use color_eyre::Result;
 use crossterm::event;
 use multid::{BoundedIx2, iterators::V2Indices};
-use rand::rngs::ThreadRng;
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
@@ -72,12 +71,15 @@ impl<'a, const N_ROWS: usize, const N_COLS: usize> StatefulWidget
                 for ix in V2Indices::<N_ROWS, N_COLS>::new() {
                     let x = -200.0 + ui::ROOM_SIZE * ix.x() as f64;
                     let y = 200.0 - ui::ROOM_SIZE * ix.y() as f64;
+                    let label_x = -200.0 + (ui::ROOM_SIZE * ix.x() as f64) + ui::SEG_LEN * 3.5;
+                    let label_y = 200.0 - (ui::ROOM_SIZE * ix.y() as f64 + ui::SEG_LEN * 3.5);
+                    if ix == state.maze.goal {
+                        ctx.print(label_x, label_y, "\u{1f945}")
+                    };
                     if state.is_seen(&ix) {
                         let room = &state.maze.rooms[ix];
                         let view = RoomView { x, y, room };
                         ctx.draw(&view);
-                        let label_x = -200.0 + (ui::ROOM_SIZE * ix.x() as f64) + ui::SEG_LEN * 3.5;
-                        let label_y = 200.0 - (ui::ROOM_SIZE * ix.y() as f64 + ui::SEG_LEN * 3.5);
                         if ix == state.maze.current_ix && ix == state.maze.goal {
                             ctx.print(label_x, label_y, "\u{1f940}")
                         } else if ix == state.maze.current_ix {
@@ -119,7 +121,6 @@ pub fn game<const N_ROWS: usize, const N_COLS: usize>(
         maze,
         seen: BTreeSet::new(),
     };
-    // let mut seen: BTreeSet<BoundedIx2<N_ROWS, N_COLS>> = BTreeSet::new();
     loop {
         st.insert_current_ix();
         terminal.draw(|frame: &mut Frame| {

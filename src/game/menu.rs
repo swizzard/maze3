@@ -91,7 +91,6 @@ impl StatefulWidget for GameMenu {
             .title_alignment(Alignment::Center)
             .title("Menu")
             .fg(Color::Green)
-            .bg(Color::White)
             .padding(Padding::symmetric(5, 1));
         let inner_area = b.inner(area);
         let vertical = Layout::vertical([Constraint::Min(0), Constraint::Length(5)]);
@@ -99,7 +98,6 @@ impl StatefulWidget for GameMenu {
         let l = MenuChoice::to_list()
             .block(Block::bordered())
             .fg(Color::Green)
-            .bg(Color::White)
             .highlight_style(Style::new().reversed())
             .highlight_symbol("*");
         Widget::render(b, area, buf);
@@ -108,8 +106,7 @@ impl StatefulWidget for GameMenu {
             Paragraph::new(state.outcome_msg())
                 .alignment(Alignment::Center)
                 .block(Block::bordered())
-                .fg(Color::Green)
-                .bg(Color::White),
+                .fg(Color::Green),
             outcome_area,
             buf,
         );

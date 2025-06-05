@@ -17,6 +17,7 @@ pub const SEG_COUNT: f64 = 7.0;
 pub const ROOM_SIZE: f64 = SEG_LEN * SEG_COUNT;
 pub const BG_COLOR: Color = Color::Black;
 pub const WALL_COLOR: Color = Color::Green;
+pub const HIDDEN_WALL_COLOR: Color = Color::Gray;
 pub const DOOR_COLOR: Color = Color::Red;
 pub fn render_maze<const N_ROWS: usize, const N_COLS: usize, F>(
     f: F,
@@ -144,43 +145,65 @@ pub struct UnseenRoomView {
     pub hidden_walls: Vec<Direction>,
 }
 
+impl UnseenRoomView {
+    fn draw_north_line(&self, painter: &mut Painter<'_, '_>, color: Color) {
+        Line {
+            x1: self.x,
+            y1: self.y,
+            x2: self.x + ROOM_SIZE,
+            y2: self.y,
+            color,
+        }
+        .draw(painter);
+    }
+    fn draw_west_line(&self, painter: &mut Painter<'_, '_>, color: Color) {
+        Line {
+            x1: self.x,
+            y1: self.y,
+            x2: self.x,
+            y2: self.y - ROOM_SIZE,
+            color,
+        }
+        .draw(painter);
+    }
+    fn draw_south_line(&self, painter: &mut Painter<'_, '_>, color: Color) {
+        Line {
+            x1: self.x,
+            y1: self.y - ROOM_SIZE,
+            x2: self.x + ROOM_SIZE,
+            y2: self.y - ROOM_SIZE,
+            color,
+        }
+        .draw(painter);
+    }
+    fn draw_east_line(&self, painter: &mut Painter<'_, '_>, color: Color) {
+        Line {
+            x1: self.x + ROOM_SIZE,
+            y1: self.y,
+            x2: self.x + ROOM_SIZE,
+            y2: self.y - ROOM_SIZE,
+            color,
+        }
+        .draw(painter)
+    }
+}
+
 impl Shape for UnseenRoomView {
     fn draw(&self, painter: &mut Painter<'_, '_>) {
-        let color = Color::Gray;
         for wall in self.hidden_walls.iter() {
             match wall {
-                Direction::North => Line {
-                    x1: self.x,
-                    y1: self.y,
-                    x2: self.x + ROOM_SIZE,
-                    y2: self.y,
-                    color,
+                Direction::North => {
+                    self.draw_north_line(painter, HIDDEN_WALL_COLOR);
                 }
-                .draw(painter),
-                Direction::West => Line {
-                    x1: self.x,
-                    y1: self.y,
-                    x2: self.x,
-                    y2: self.y - ROOM_SIZE,
-                    color,
+                Direction::West => {
+                    self.draw_west_line(painter, HIDDEN_WALL_COLOR);
                 }
-                .draw(painter),
-                Direction::South => Line {
-                    x1: self.x,
-                    y1: self.y - ROOM_SIZE,
-                    x2: self.x + ROOM_SIZE,
-                    y2: self.y - ROOM_SIZE,
-                    color,
+                Direction::South => {
+                    self.draw_south_line(painter, HIDDEN_WALL_COLOR);
                 }
-                .draw(painter),
-                Direction::East => Line {
-                    x1: self.x + ROOM_SIZE,
-                    y1: self.y,
-                    x2: self.x + ROOM_SIZE,
-                    y2: self.y - ROOM_SIZE,
-                    color,
+                Direction::East => {
+                    self.draw_east_line(painter, HIDDEN_WALL_COLOR);
                 }
-                .draw(painter),
             }
         }
     }

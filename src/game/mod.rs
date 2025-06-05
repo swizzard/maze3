@@ -2,7 +2,7 @@ use crate::{maze::Maze, movement::MazeEvent};
 use color_eyre::Result;
 use crossterm::event;
 use rand::rngs::ThreadRng;
-use ratatui::{Frame, widgets::ListState};
+use ratatui::Frame;
 
 pub mod basic;
 pub mod hidden;
@@ -76,22 +76,3 @@ fn new_seeded<const N_ROWS: usize, const N_COLS: usize>(
     seed_doors_path(&mut maze, rng);
     maze
 }
-
-// pub fn render_ui<const N_ROWS: usize, const N_COLS: usize>(
-//     maze: &mut Maze<N_ROWS, N_COLS>,
-//     rng: &mut ThreadRng,
-//     game: Game,
-// ) -> Result<()> {
-//     let terminal = ratatui::init();
-//     let game_fn = match game {
-//         Game::Basic => basic::game,
-//         Game::Hidden => hidden::game,
-//         Game::Lantern => lantern::game,
-//     };
-//     let result = game_fn(terminal, maze, rng);
-//     ratatui::restore();
-//     result.map(|outcome| match outcome {
-//         Outcome::Win => println!("You won!"),
-//         Outcome::Quit => println!("You quit!"),
-//     })
-// }
