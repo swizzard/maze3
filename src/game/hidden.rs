@@ -112,9 +112,8 @@ impl<'a, const N_ROWS: usize, const N_COLS: usize> StatefulWidget
 }
 
 pub fn game<const N_ROWS: usize, const N_COLS: usize>(
-    mut terminal: DefaultTerminal,
+    terminal: &mut DefaultTerminal,
     maze: &mut Maze<N_ROWS, N_COLS>,
-    _rng: &mut ThreadRng,
 ) -> Result<Outcome> {
     let mut st: HiddenGameState<N_ROWS, N_COLS> = HiddenGameState {
         maze,

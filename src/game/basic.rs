@@ -7,7 +7,6 @@ use crate::{
 use color_eyre::Result;
 use crossterm::event;
 use multid::iterators::V2Indices;
-use rand::rngs::ThreadRng;
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
@@ -50,9 +49,8 @@ impl<const N_ROWS: usize, const N_COLS: usize> StatefulWidget for BasicGame<N_RO
 }
 
 pub fn game<const N_ROWS: usize, const N_COLS: usize>(
-    mut terminal: DefaultTerminal,
+    terminal: &mut DefaultTerminal,
     maze: &mut Maze<N_ROWS, N_COLS>,
-    _rng: &mut ThreadRng,
 ) -> Result<Outcome> {
     loop {
         terminal.draw(|frame: &mut Frame| {

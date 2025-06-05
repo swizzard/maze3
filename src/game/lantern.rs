@@ -8,7 +8,6 @@ use crate::{
 use color_eyre::Result;
 use crossterm::event;
 use multid::{BoundedIx2, iterators::Ix2Neighbors};
-use rand::rngs::ThreadRng;
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
@@ -115,9 +114,8 @@ impl<'a, const N_ROWS: usize, const N_COLS: usize> StatefulWidget
 }
 
 pub fn game<const N_ROWS: usize, const N_COLS: usize>(
-    mut terminal: DefaultTerminal,
+    terminal: &mut DefaultTerminal,
     maze: &mut Maze<N_ROWS, N_COLS>,
-    _rng: &mut ThreadRng,
 ) -> Result<Outcome> {
     let mut st: LanternGameState<N_ROWS, N_COLS> = LanternGameState {
         maze,

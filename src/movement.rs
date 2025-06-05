@@ -25,6 +25,7 @@ pub enum MazeEvent {
     MoveS,
     MoveE,
     MoveW,
+    Enter,
     Quit,
     OtherKey(KeyCode),
     Other(Event),
@@ -87,6 +88,14 @@ impl From<Event> for MazeEvent {
                 code: KeyCode::Char('s'),
                 ..
             }) => MazeEvent::MoveS,
+            Event::Key(KeyEvent {
+                code: KeyCode::Enter,
+                ..
+            })
+            | Event::Key(KeyEvent {
+                code: KeyCode::Char(' '),
+                ..
+            }) => MazeEvent::Enter,
             Event::Key(KeyEvent { code: kc, .. }) => MazeEvent::OtherKey(kc),
             other => MazeEvent::Other(other),
         }

@@ -6,7 +6,7 @@ pub mod maze;
 pub mod movement;
 pub mod ui;
 
-pub use game::{Game, render_ui, seed_doors_path};
+pub use game::game_loop;
 pub use maze::Maze;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
