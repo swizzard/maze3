@@ -36,20 +36,26 @@ pub fn game_loop<const N_ROWS: usize, const N_COLS: usize>() -> Result<()> {
         terminal.draw(|frame: &mut Frame| {
             frame.render_stateful_widget(menu::GameMenu, frame.area(), &mut menu_state)
         })?;
-        let _outcome = match choice {
-            None => Outcome::Win,
+        match choice {
+            None => (),
             Some(MenuChoice::Quit) => break,
             Some(MenuChoice::Game(Game::Basic)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                basic::game(&mut terminal, &mut maze)?
+                basic::game(&mut terminal, &mut maze)?;
+                choice = None;
+                continue;
             }
             Some(MenuChoice::Game(Game::Hidden)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                hidden::game(&mut terminal, &mut maze)?
+                hidden::game(&mut terminal, &mut maze)?;
+                choice = None;
+                continue;
             }
             Some(MenuChoice::Game(Game::Lantern)) => {
                 let mut maze = new_seeded::<N_ROWS, N_COLS>(&mut rng);
-                lantern::game(&mut terminal, &mut maze)?
+                lantern::game(&mut terminal, &mut maze)?;
+                choice = None;
+                continue;
             }
         };
         choice = None;
